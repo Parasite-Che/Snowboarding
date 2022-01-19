@@ -6,10 +6,13 @@ public class Collision : MonoBehaviour
     public GameObject player;
     public Vector2 dotDirection;
     public Vector2 posPlayer;
+    public Dash dash;
     public Inventory2 inv2 = null;
     public Score scr;
+    public BackpackControl backpack;
     public int skinAmountModifier;
     private int big;
+    private string collisionTag;
 
     /*
      * Object IDs:
@@ -60,12 +63,21 @@ public class Collision : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.CompareTag("Animal"))
+        collisionTag = collision.transform.tag;
+        if (collisionTag == "Animal")
         {
             big = (int)collision.gameObject.GetComponent<Enemy>().type;
-            if (big == 1 && Random.Range(0, 101) > GetComponent<PlayerUpgrades>().killChance)
+            if (player.GetComponent<Bonuses>().bonuses.nuclearFuel.active && dash.dashing)
             {
-                if (player.GetComponent<Bonuses>().bonuses.shield.active)
+                ;
+            }
+            else if (big == 1 && Random.Range(0, 101) > GetComponent<PlayerUpgrades>().killChance)
+            {
+                if (player.GetComponent<Bonuses>().bonuses.mushroom.active)
+                {
+                    ;
+                }
+                else if (player.GetComponent<Bonuses>().bonuses.shield.active)
                 {
                     player.GetComponent<Bonuses>().bonuses.shield.ShieldUse();
                 }
@@ -77,20 +89,25 @@ public class Collision : MonoBehaviour
             int ID = collision.transform.GetComponent<ObjectID>().ID;
             float impact = collision.transform.GetComponent<ObjectID>().impact;
             Debug.Log(collision.transform.name);
-            slowPlayer(player.GetComponent<Rigidbody2D>(), impact, big);
+            slowPlayerAnimal(player.GetComponent<Rigidbody2D>(), impact, big);
             Destroy(collision.gameObject);
             Debug.Log("object destroyed");
-            if ((collision.gameObject.GetComponent<Enemy>().type == Enemy.animalType.small
-                && GetComponent<PlayerUpgrades>().smallAnimals)
-                || (collision.gameObject.GetComponent<Enemy>().type == Enemy.animalType.big
-                && GetComponent<PlayerUpgrades>().bigAnimals))
+            if ((big != 1 && GetComponent<PlayerUpgrades>().smallAnimals)
+                || (big == 1 && GetComponent<PlayerUpgrades>().bigAnimals))
             {
                 inv2.AddItemFromCollision(ID, 1 * skinAmountModifier);
             }
         }
+        else if (collisionTag == "Roadblock Collider")
+        {
+            if (player.GetComponent<Bonuses>().bonuses.nuclearFuel.active && dash.dashing == true)
+            {
+                Destroy(collision.gameObject);
+            }
+        }
     }
 
-    private void slowPlayer(Rigidbody2D rb, float impact, int big)
+    private void slowPlayerAnimal(Rigidbody2D rb, float impact, int big)
     {
         posPlayer = player.transform.position;
         dotDirection = GameObject.Find("Direction").transform.position;
@@ -106,22 +123,53 @@ public class Collision : MonoBehaviour
         }
     }
 
-    public int OnTriggerEnter2D(Collider2D collision)
+    private void slowPlayer(Rigidbody2D rb, float impact)
     {
-        if(collision.CompareTag("Chest"))
+        posPlayer = player.transform.position;
+        dotDirection = GameObject.Find("Direction").transform.position;
+        Vector2 direction = posPlayer - dotDirection;
+        rb.AddForce(direction * impact);
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        collisionTag = collision.transform.tag;
+        if (collisionTag == "Chest")
         {
             inv2.AddCoinsFromChest();
             Destroy(collision.gameObject);
         }
-        if (collision.CompareTag("Avalanche"))
+        else if (collisionTag == "Avalanche")
         {
             player.GetComponent<Death>().Die = true;
         }
-        if (collision.transform.CompareTag("Bonus"))
+        else if (collisionTag == "Bonus")
         {
             int id = collision.GetComponent<BonusID>().ID;
-            player.GetComponent<Bonuses>().ActivateBonus(id);
+
+            if (!backpack.StoreBonusItem(id) && !collision.GetComponent<BonusID>().activated)
+            {
+                Debug.Log("Backpack is not empty, bonus activated immediately");
+                player.GetComponent<Bonuses>().ActivateBonus(id);
+            }
+            collision.GetComponent<BonusID>().activated = true;
             Destroy(collision.gameObject);
+        }
+        else if (collisionTag == "Camp")
+        {
+            inv2.AddItemFromCollision(Random.Range(0, 7), Random.Range(1, 4));
+        }
+        else if (collisionTag == "Roadblock Trigger")
+        {
+            if (player.GetComponent<Bonuses>().bonuses.nuclearFuel.active && dash.dashing == true)
+            {
+
+            }
+            else
+            {
+                float impact = collision.transform.GetComponent<ObjectID>().impact;
+                slowPlayer(player.GetComponent<Rigidbody2D>(), impact);
+            }
         }
         //else if (collision.transform.parent.gameObject.CompareTag("Animal"))
         //{
@@ -136,6 +184,6 @@ public class Collision : MonoBehaviour
         {
             Destroy(collision.GetComponentInParent<Transform>().gameObject, 1f);
         }*/
-        return 0;
+        return;
     }
 }

@@ -5,12 +5,13 @@ using UnityEngine.UI;
 
 public class Rotate : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
-    private GameObject player;
+    [SerializeField] GameObject player;
     public bool click = false;
     public bool grounded = false;
     public float RotateForce;
     public float JumpForce;
     public float JumpForceModifier;
+    public float bonusJumpForceModifier;
     public float maxAngularSpeed;
     public int k;
     private float z;
@@ -26,12 +27,13 @@ public class Rotate : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     public void Start()
     {
         rb = GameObject.FindWithTag("Player").GetComponent<Rigidbody2D>();
+        bonusJumpForceModifier = player.GetComponent<Bonuses>().bonuses.steroids.bonusJumpForceModifier;
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         click = true;
-        player = GameObject.FindWithTag("Player");
+        //player = GameObject.FindWithTag("Player");
         JumpLogic( Vector3.up);
         GetComponent<Graphic>().color = new Color32(0, 255, 0, 70);
     }
@@ -87,11 +89,12 @@ public class Rotate : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
     {
         if (grounded)
         {
-            rb.AddForce(direction * JumpForce * JumpForceModifier * 10);
+            rb.AddForce(direction * JumpForce * JumpForceModifier
+                * (player.GetComponent<Bonuses>().bonuses.steroids.active ? bonusJumpForceModifier : 1));
         }
     }
     public void JumpSave()
     {
-        rb.AddForce(Vector2.up * JumpForce * 10);
+        rb.AddForce(Vector2.up * JumpForce);
     }
 }

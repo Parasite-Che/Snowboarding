@@ -9,6 +9,7 @@ public class UpgradeButtons : MonoBehaviour
     public PlayerUpgrades upgrades;
     public GameObject upgradeButtons;
     private int maxLvl = 3;
+    private int bagMaxLvl = 1;
     public Inventory2 inv = null;
     public ShopControl shopCntrl;
 
@@ -121,5 +122,17 @@ public class UpgradeButtons : MonoBehaviour
             shopCntrl.ShopUpdate();
         }
         
+    }
+    public void BagUpgrade()
+    {
+        if ((upgrades.bagLvl < bagMaxLvl)
+            && inv.totalCoin >= shop.upgradeShop.BagUpgrades[upgrades.bagLvl + 1].unlockCost)
+        {
+            inv.RemoveCoins(shop.upgradeShop.BagUpgrades[upgrades.bagLvl + 1].unlockCost);
+            upgrades.bagLvl++;
+            PlayerPrefs.SetInt("bagLvl", upgrades.bagLvl);
+            PlayerPrefs.Save();
+            shopCntrl.ShopUpdate();
+        }
     }
 }

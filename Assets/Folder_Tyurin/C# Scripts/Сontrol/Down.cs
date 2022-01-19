@@ -9,6 +9,7 @@ public class Down : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public float DownForce;
     public LayerMask groundLayer;
     private Rigidbody2D rb;
+    public GameObject GroundedTrigger;
 
     public void Start()
     {
@@ -40,7 +41,7 @@ public class Down : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     void Update()
     {
-        grounded = GameObject.FindWithTag("Player").GetComponent<Collider2D>().IsTouchingLayers(groundLayer.value);
+        grounded = GroundedTrigger.GetComponent<Collider2D>().IsTouchingLayers(groundLayer.value);
         if ((grounded == false) & click)
         {
             rb.AddForce(Vector3.down * DownForce);

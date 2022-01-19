@@ -11,6 +11,7 @@ public class Dash : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public float fuel;
     public float fuelMax;
     public bool click;
+    public bool dashing;
     public Rigidbody2D rb;
     public float Power;
     public float Reload;
@@ -63,10 +64,12 @@ public class Dash : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         if (click && (fuel > 0))
         {
             StartCoroutine(HoldDash(Direction));
+            dashing = true;
         }
         else
         {
             StopCoroutine(HoldDash(Direction));
+            dashing = false;
         }
 
         if (fuel > 0)

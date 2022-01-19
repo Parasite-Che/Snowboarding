@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerUpgrades : MonoBehaviour
 {
     public GameObject upgrades;
+    public BackpackControl backpack;
     
     public float defaultFriction;
 
@@ -48,6 +49,9 @@ public class PlayerUpgrades : MonoBehaviour
     public int saves;
     public GameObject head;
 
+    [Header("Bag")]
+    public int bagLvl;
+
 
     // Start is called before the first frame update
     void Start()
@@ -71,6 +75,7 @@ public class PlayerUpgrades : MonoBehaviour
         weaponsLvl = PlayerPrefs.GetInt("weaponsLvl", 0);
         steroidsLvl = PlayerPrefs.GetInt("steroidsLvl", 0);
         helmetLvl = PlayerPrefs.GetInt("helmetLvl", 0);
+        bagLvl = PlayerPrefs.GetInt("bagLvl", 0);
     }
 
     void InitializeUpgrades()
@@ -82,6 +87,7 @@ public class PlayerUpgrades : MonoBehaviour
         WeaponsUpgrades();
         SteroidsUpgrades();
         HelmetUpgrades();
+        BagUpgrades();
     }
 
     void SnowboardUpgrades()
@@ -137,5 +143,10 @@ public class PlayerUpgrades : MonoBehaviour
         saves = upgrades.GetComponent<Upgrade>().upgradeShop.HelmetUpgrades[helmetLvl].saves;
 
         head.GetComponent<HeadCollisionCheck>().headSaves = saves;
+    }
+
+    void BagUpgrades()
+    {
+        backpack.gameObject.transform.parent.gameObject.SetActive(bagLvl > 0);
     }
 }
