@@ -16,6 +16,7 @@ namespace Shop
         public WeaponsItem[] WeaponsUpgrades;
         public SteroidsItem[] SteroidsUpgrades;
         public HelmetItem[] HelmetUpgrades;
+        public BagItem[] BagUpgrades;
     }
 
     public class Item
@@ -97,6 +98,14 @@ namespace Shop
     public class HelmetItem : Item
     {
         public int saves;
+    }
+
+    // level 0 - no bag
+    // level 1 - yes bag (holds 1 bonus)
+    [System.Serializable]
+    public class BagItem : Item
+    {
+        
     }
 }
 

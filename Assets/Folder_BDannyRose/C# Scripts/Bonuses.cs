@@ -71,13 +71,23 @@ namespace Bonus
     [System.Serializable]
     public class Mushroom : Bonus
     {
-
+        public GameObject player;
+        public override void Activate()
+        {
+            active = true;
+            player.transform.localScale = new Vector3(player.transform.localScale.x * 2, player.transform.localScale.y * 2);
+        }
+        public override void Deactivate()
+        {
+            active = false;
+            player.transform.localScale = new Vector3(player.transform.localScale.x / 2, player.transform.localScale.y / 2);
+        }
     }
 
     [System.Serializable]
     public class Steroids : Bonus
     {
-        
+        public float bonusJumpForceModifier;
     }
 
     

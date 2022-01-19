@@ -18,6 +18,7 @@ public class HeadCollisionCheck : MonoBehaviour
             }
             else
             {
+                Debug.Log("Head jump");
                 jump.JumpLogic(Vector2.up);
                 headSaves--;
             }

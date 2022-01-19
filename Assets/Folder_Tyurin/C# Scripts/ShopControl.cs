@@ -9,6 +9,7 @@ public class ShopControl : MonoBehaviour
     public Inventory2 placeOfCoin = null;
     public PlayerUpgrades level;
     public int maxLVL;
+    public int bagMaxLVL;
 
     public GameObject helmetButton;
     public GameObject jetpackButton;
@@ -17,6 +18,7 @@ public class ShopControl : MonoBehaviour
     public GameObject WeaponsButton;
     public GameObject SteroidsButton;
     public GameObject SnowboardButton;
+    public GameObject BagButton;
 
     public void ShopUpdate()
     {
@@ -135,6 +137,22 @@ public class ShopControl : MonoBehaviour
         else
         {
             SnowboardButton.GetComponent<Graphic>().color = new Color32(0, 85, 0, 255);
+        }
+        //                                                 Backpack
+        if (level.bagLvl < bagMaxLVL)
+        {
+            if (currenntShop.upgradeShop.BagUpgrades[level.bagLvl + 1].unlockCost <= placeOfCoin.totalCoin)
+            {
+                BagButton.GetComponent<Graphic>().color = new Color32(110, 176, 0, 255);
+            }
+            else
+            {
+                BagButton.GetComponent<Graphic>().color = new Color32(85, 85, 85, 255);
+            }
+        }
+        else
+        {
+            BagButton.GetComponent<Graphic>().color = new Color32(0, 85, 0, 255);
         }
     }
 }

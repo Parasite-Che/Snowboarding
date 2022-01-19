@@ -10,4 +10,5 @@ public class BonusID : MonoBehaviour
     // 3 = shield
     // 4 = steroids
     public int ID;
+    public bool activated = false;
 }
